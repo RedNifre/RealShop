@@ -125,6 +125,7 @@ public class RealShopTransaction
 	}
 
 	//-------------------------------------------------------------------------------------- toString
+	@Override
 	public String toString()
 	{
 		String result = "";
