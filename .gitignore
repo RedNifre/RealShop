@@ -1,0 +1,5 @@
+# Ignore NetBeans-specific metadata
+build.xml
+build/*
+manifest.mf
+nbproject/*
