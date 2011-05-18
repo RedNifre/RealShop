@@ -1312,18 +1312,23 @@ public class RealShopPlugin extends RealPlugin
 	public void shopPricesInfos(Player player, Block block)
 	{
 		RealShop shop = shopsFile.shopAt(block);
-		String list;
+
+		/* Get prices list for this shop (which may be specific or global) and
+		 * (an iterator over the IDs (which are strings) of) which objects may be sold here. */
 		RealPricesFile pricesFile = RealPricesFile.playerPricesFile(this, shop.player, marketFile);
 		// sell (may be a very long list)
-		list = "";
+		String list = "";
 		Iterator<String> sellIterator = shop.sellOnly.keySet().iterator();
 		if (!sellIterator.hasNext()) {
 			sellIterator = dataValuesFile.getIdsIterator();
 		}
+
+		/* Only show the first 20 objects to sell here */
 		int count = 20;
 		while (sellIterator.hasNext()) {
 			String typeIdDamage = sellIterator.next();
 			RealPrice price = pricesFile.getPrice(typeIdDamage, marketFile);
+			// FIXME: This is redundantly done in pricesFile.getPrice(...), and IMO fallback handling doesn't belong into that method.
 			if (price == null) {
 				price = marketFile.getPrice(typeIdDamage, null);
 			}
@@ -1348,12 +1353,15 @@ public class RealShopPlugin extends RealPlugin
 				.replace("+items", RealColor.item + list + RealColor.message)
 			);
 		}
+
 		// buy (may be as long as the number of filled slots!) 
 		list = "";
 		RealItemStackHashMap itemStack = RealItemStackHashMap.create().storeInventory(
 			RealInventory.create(RealChest.create(block)), false
 		); 
 		Iterator<RealItemStack> buyIterator = itemStack.getContents().iterator();
+
+		/* Only show the first 20 objects to buy here */
 		count = 20;
 		while (buyIterator.hasNext()) {
 			RealItemStack item = buyIterator.next();

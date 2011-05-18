@@ -172,13 +172,31 @@ public class RealPricesFile
 		}
 	}
 
-	//-------------------------------------------------------------------------------------- getPrice
+	/**
+	 * Gets the price for the given object (ID + damage value used for identification).
+	 * First, the price is looked up in this prices file. If no price is available here,
+	 * the price is looked up in the given market file or calculated from the object's recipe.
+	 *
+	 * @param typeIdDamage
+	 * @param marketFile Prices file used for fallback lookup.
+	 * @return 
+	 */
 	public RealPrice getPrice(String typeIdDamage, RealPricesFile marketFile)
 	{
 		return getPrice(typeIdDamage, marketFile, true);
 	}
 
-	//-------------------------------------------------------------------------------------- getPrice
+	/**
+	 * Gets the price for the given object (ID + damage value used for identification).
+	 * First, the price is looked up in this prices file. If no price is available here,
+	 * the price is looked up in the given market file.
+	 * If desired, the price may also be calculated from the object's recipe.
+	 *
+	 * @param typeIdDamage
+	 * @param marketFile Prices file used for fallback lookup.
+	 * @param recipe Calculate price from recipe if it's not predefined?
+	 * @return 
+	 */
 	public RealPrice getPrice(String typeIdDamage, RealPricesFile marketFile, boolean recipe)
 	{
 		RealPrice price = prices.get(typeIdDamage);
@@ -250,7 +268,15 @@ public class RealPricesFile
 		return RealTools.fileExists("plugins/" + plugin.name + "/" + player + ".prices.txt");
 	}
 
-	//------------------------------------------------------------------------------ playerPricesFile
+	/**
+	 * Returns the file containing player specific prices if available.
+	 * If none are available, a default prices file is returned.
+	 *
+	 * @param plugin
+	 * @param player Player whose prices file is requested.
+	 * @param defaultFile File containing default prices.
+	 * @return A file containing player specific or default prices.
+	 */
 	public static RealPricesFile playerPricesFile(
 		RealShopPlugin plugin, String player, RealPricesFile defaultFile
 	) {
