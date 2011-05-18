@@ -9,18 +9,19 @@ import java.util.Iterator;
 import java.util.StringTokenizer;
 
 import fr.crafter.tickleman.RealPlugin.RealDataValuesFile;
+import fr.crafter.tickleman.RealPlugin.RealItemStack;
 import fr.crafter.tickleman.RealPlugin.RealTools;
 
 //###################################################################################### PricesFile
 public class RealPricesFile
 {
 
-	/** master plugin */
-	private final RealShopPlugin plugin;
-
 	/** stored file name */
 	private final String fileName;
 	
+	/** master plugin */
+	private final RealShopPlugin plugin;
+
 	/** prices list : typeId[:damageId] => RealPrice(buy, sell) */
 	public HashMap<String, RealPrice> prices = new HashMap<String, RealPrice>();
 
@@ -202,10 +203,33 @@ public class RealPricesFile
 		RealPrice price = prices.get(typeIdDamage);
 		if (price == null) {
 			if (marketFile != null) {
+				// market file price
 				price = marketFile.getPrice(typeIdDamage, null, false);
 			}
-			if (recipe && (price == null)) {
+			if ((price == null) && recipe) {
+				// recipe price
 				price = fromRecipe(typeIdDamage, marketFile);
+			}
+			if ((price == null) && typeIdDamage.contains(":")) {
+				// item without damage code price
+				Integer typeId = Integer.parseInt(typeIdDamage.split(":")[0]);
+				Short damage = Short.parseShort(typeIdDamage.split(":")[1]);
+				price = getPrice(typeId.toString(), marketFile, recipe);
+				if (price != null) {
+					// apply a ratio from the damage amount
+					try {
+						price.damagedBuy = Math.max(
+							0, price.buy - (price.buy * damage / RealItemStack.typeIdMaxDamage(typeId))
+						);
+					} catch(Exception e) {
+					}
+					try {
+						price.damagedSell = Math.max(
+							0, price.sell - (price.sell * damage / RealItemStack.typeIdMaxDamage(typeId))
+						);
+					} catch(Exception e) {
+					}
+				}
 			}
 		}
 		return price; 
@@ -313,7 +337,7 @@ public class RealPricesFile
 			plugin.log.severe("Could not save plugins/" + plugin.name + "/" + fileName + ".txt file");
 		}
 		// Save all current values (including calculated prices) into currentValues.txt
-		if (fileName.equals( "market" )) {
+		if (fileName.equals("market")) {
 			try {
 				RealDataValuesFile dataValues = new RealDataValuesFile(plugin, "dataValues").load();
 				BufferedWriter writer = new BufferedWriter(

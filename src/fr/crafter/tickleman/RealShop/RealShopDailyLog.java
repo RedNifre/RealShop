@@ -9,8 +9,9 @@ import fr.crafter.tickleman.RealPlugin.RealLog;
 public class RealShopDailyLog
 {
 
-	private final RealShopPlugin plugin;
 	public HashMap<String, Integer> moves = new HashMap<String, Integer>();
+
+	private final RealShopPlugin plugin;
 
 	//------------------------------------------------------------------------------ RealShopDailyLog
 	public RealShopDailyLog(final RealShopPlugin plugin)
@@ -47,7 +48,7 @@ public class RealShopDailyLog
 			Iterator<RealShopTransactionLine> iterator = transaction.transactionLines.iterator();
 			while (iterator.hasNext()) {
 				RealShopTransactionLine item = iterator.next();
-				String typeIdDamage = item.getTypeIdDamage();
+				String typeIdDamage = item.getTypeIdDurability();
 				add(typeIdDamage, item.getAmount());
 			}
 		}

@@ -7,10 +7,12 @@ public class RealEconomy
 {
 
 	public RealAccountsFile accountsFile;
+
 	public RealEconomyConfig config;
-	private RealPlugin plugin;
 
 	public String economyPlugin;
+
+	private RealPlugin plugin;
 
 	//----------------------------------------------------------------------------------- RealEconomy
 	public RealEconomy(RealPlugin plugin)
@@ -22,15 +24,18 @@ public class RealEconomy
 		config.load();
 	}
 
-	//------------------------------------------------------------------------------------ getBalance
-	public String getBalance(String playerName, boolean withCurrency)
+	//---------------------------------------------------------------------------------------- format
+	public String format(Double amount)
 	{
-		Double balance = getBalance(playerName);
-		if (withCurrency) {
-			return balance + " " + getCurrency();
+		String result;
+		if (iConomyLink.initialized && economyPlugin.equals("iConomy")) {
+			result = iConomyLink.format(amount);
+		} else if (BOSEconomyLink.initialized && economyPlugin.equals("BOSEconomy")) {
+			result = BOSEconomyLink.format(amount);
 		} else {
-			return balance.toString();
+			result = amount.toString() + " " + getCurrency();
 		}
+		return result.replace(".00 ", "").replace(".0 ", "");
 	}
 
 	//------------------------------------------------------------------------------------ getBalance
@@ -51,7 +56,18 @@ public class RealEconomy
 				}
 			}
 		}
-		return Math.round(balance * 100) / 100;
+		return Math.round(balance * 100.0) / 100.0;
+	}
+
+	//------------------------------------------------------------------------------------ getBalance
+	public String getBalance(String playerName, boolean withCurrency)
+	{
+		Double balance = getBalance(playerName);
+		if (withCurrency) {
+			return format(balance);
+		} else {
+			return balance.toString();
+		}
 	}
 
 	//----------------------------------------------------------------------------------- getCurrency
