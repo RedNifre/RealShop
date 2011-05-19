@@ -1,0 +1,2 @@
+somestuff;8;5
+someotherstuff;1000;2

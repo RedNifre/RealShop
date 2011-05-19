@@ -310,6 +310,18 @@ public class RealPricesFile
 			return defaultFile;
 		}
 	}
+	
+	public static boolean shopPricesFileExists(RealShopPlugin plugin, String shopID) {
+		return playerHasPricesFile( plugin, shopID );
+	}
+	
+	public static RealPricesFile getShopPricesFile( RealShopPlugin plugin, RealShop shop ) {
+		String shopID = shop.world + ";" + shop.posX + ";" + shop.posY + ";" + shop.posZ;
+		if(shopPricesFileExists(plugin,shopID)) {
+			return new RealPricesFile(plugin, shopID + ".prices").load();
+		}
+		return null;
+	}
 
 	//------------------------------------------------------------------------------------------ save
 	public void save()
