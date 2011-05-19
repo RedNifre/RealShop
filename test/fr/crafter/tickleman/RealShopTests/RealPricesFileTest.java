@@ -29,14 +29,6 @@ public class RealPricesFileTest {
 		this.testPlugin.name = "testplugin";
 	}
 
-	@BeforeClass
-	public static void setUpClass() throws Exception {
-	}
-
-	@AfterClass
-	public static void tearDownClass() throws Exception {
-	}
-
 	@Before
 	public void setUp() {
 		this.testShop = new RealShop( world, x, y, z, "" );
@@ -46,15 +38,15 @@ public class RealPricesFileTest {
 	@After
 	public void tearDown() {
 	}
-	// TODO add test methods here.
-	// The methods must be annotated with annotation @Test. For example:
-	//
-	// @Test
-	// public void hello() {}
 
 	@Test
 	public void testFileExists() {
 		assertTrue( RealPricesFile.shopPricesFileExists( testPlugin, "" + world + ";" + x + ";" + y + ";" + z ) );
+	}
+
+	@Test
+	public void testFileDoesNotExist() {
+		assertFalse( RealPricesFile.shopPricesFileExists( testPlugin, "bla" + world + ";" + x + ";" + y + ";" + z ) );
 	}
 
 	@Test
