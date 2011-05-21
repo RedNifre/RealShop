@@ -13,7 +13,7 @@ import fr.crafter.tickleman.RealPlugin.RealItemStack;
 import fr.crafter.tickleman.RealPlugin.RealTools;
 
 //###################################################################################### PricesFile
-public class RealPricesFile implements RealPricesList
+public class RealPricesFile
 {
 
 	/** stored file name */
@@ -36,7 +36,6 @@ public class RealPricesFile implements RealPricesList
 	}
 
 	//------------------------------------------------------------------------ dailyPricesCalculation
-	@Override
 	public void dailyPricesCalculation(RealShopDailyLog dailyLog)
 	{
 		dailyPricesCalculation(dailyLog, false);
@@ -49,7 +48,6 @@ public class RealPricesFile implements RealPricesList
 	 * - the last day transactions log
 	 * - the last items price
 	 */
-	@Override
 	public void dailyPricesCalculation(RealShopDailyLog dailyLog, boolean simulation)
 	{
 		plugin.log.info("dailyPricesCalculation (" + (simulation ? "SIMULATION" : "FOR REAL") + ")");
@@ -109,7 +107,6 @@ public class RealPricesFile implements RealPricesList
 	 * - stick (typeId=280) : 5*2=4 : 2 wooden planks gives you 4 sticks
 	 * - diamond hoe (typeId=293) : 280*2+264*2 : 2 sticks and 2 diamonds give you 1 diamond hoe
 	 */
-	@Override
 	public RealPrice fromRecipe(String typeIdDamage, RealPricesFile marketFile)
 	{
 		String recipe = plugin.dataValuesFile.getRecipe(typeIdDamage);
@@ -185,7 +182,6 @@ public class RealPricesFile implements RealPricesList
 	 * @param marketFile Prices file used for fallback lookup.
 	 * @return 
 	 */
-	@Override
 	public RealPrice getPrice(String typeIdDamage, RealPricesFile marketFile)
 	{
 		return getPrice(typeIdDamage, marketFile, true);
@@ -202,7 +198,6 @@ public class RealPricesFile implements RealPricesList
 	 * @param recipe Calculate price from recipe if it's not predefined?
 	 * @return 
 	 */
-	@Override
 	public RealPrice getPrice(String typeIdDamage, RealPricesFile marketFile, boolean recipe)
 	{
 		RealPrice price = prices.get(typeIdDamage);
@@ -241,7 +236,6 @@ public class RealPricesFile implements RealPricesList
 	}
 
 	//------------------------------------------------------------------------------------------ load
-	@Override
 	public RealPricesFile load()
 	{
 		boolean willSave = false;
@@ -337,7 +331,6 @@ public class RealPricesFile implements RealPricesList
 	}
 
 	//------------------------------------------------------------------------------------------ save
-	@Override
 	public void save()
 	{
 		try {

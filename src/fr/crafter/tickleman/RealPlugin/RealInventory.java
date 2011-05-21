@@ -124,6 +124,18 @@ public class RealInventory
 		}
 		return false;
 	}
+	
+	public int getAmount( int typeId ) {
+		int amount = 0;
+		for( int i = 0; i < inventories.length; i++ ) {
+			HashMap<Integer, ? extends ItemStack> items = inventories[i].all( typeId );
+			Iterator<? extends ItemStack> iterator = items.values().iterator();
+			while( iterator.hasNext() ) {
+				amount += iterator.next().getAmount();
+			}
+		}
+		return amount;
+	}
 
 	//---------------------------------------------------------------------------------------- backup
 	/**
