@@ -42,11 +42,11 @@ public class RealPriceLookupChain {
 	priceList.dailyPricesCalculation( dailyLog, simulation );
 	}
 	}*/
-	public RealPrice getPrice( String typeIdDamage, RealShopPlugin plugin, RealShop shop, String playerName ) {
+	public RealPrice getPrice( String typeIdDamage, int amount, RealShopPlugin plugin, RealShop shop, String playerName ) {
 		// If this gets called in the prototype chain, create an instance and relay price lookup to it.
 		if( this.priceListInstances == null ) {
 			RealPriceLookupChain chain = createChain( plugin, shop, playerName );
-			return chain.getPrice( typeIdDamage, plugin, shop, playerName );
+			return chain.getPrice( typeIdDamage, amount, plugin, shop, playerName );
 		}
 		// From here on: Code for the chain with price list instances.
 		RealPrice price = null;
@@ -67,7 +67,7 @@ public class RealPriceLookupChain {
 				this.askedLists.put( typeIdDamage, listSet );
 			}
 
-			price = priceList.getPrice( typeIdDamage );
+			price = priceList.getPrice( typeIdDamage, amount );
 			if( price != null ) {
 				break;
 			}

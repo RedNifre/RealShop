@@ -51,9 +51,9 @@ public class RealPriceListShopFileTest {
 
 	@Test
 	public void testGetPrice() {
-		RealPrice price = this.testPrices.getPrice( "nonexistentstuff" );
+		RealPrice price = this.testPrices.getPrice( "nonexistentstuff", 1 );
 		assertNull( price );
-		price = this.testPrices.getPrice( "somestuff" );
+		price = this.testPrices.getPrice( "somestuff", 1 );
 		assertNotNull( price );
 		assertEquals( 8, price.buy, 0 );
 		assertEquals( 5, price.sell, 0 );

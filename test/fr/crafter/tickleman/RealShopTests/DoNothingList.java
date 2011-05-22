@@ -9,7 +9,7 @@ import fr.crafter.tickleman.RealShop.pricelookup.RealPriceLookupChain;
 
 public class DoNothingList extends RealPriceList {
 	@Override
-	public RealPrice getPrice( String typeIdDamage ) {
+	public RealPrice getPrice( String typeIdDamage, int amount ) {
 		return null;
 	}
 

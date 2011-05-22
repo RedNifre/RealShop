@@ -9,7 +9,7 @@ import fr.crafter.tickleman.RealShop.RealShopPlugin;
 
 public class PriceListOtherlandShop extends RealPriceList {
 	/* Constants for price calculation */
-	private final double categoryValue = 1000000000;
+	private final int categoryValue = 1000000000;
 	/* Other variables */
 	private RealShopPlugin plugin;
 	private RealShop shop;
@@ -24,30 +24,28 @@ public class PriceListOtherlandShop extends RealPriceList {
 	}
 
 	@Override
-	public RealPrice getPrice( String typeIdDamage ) {
+	public RealPrice getPrice( String typeIdDamage, int amount ) {
 		return new RealPrice( getBuyingPrice( typeIdDamage ), getSellingPrice( typeIdDamage ) );
 	}
 
 	private double getSellingPrice( String typeIdDamage ) {
-		// Amount of item in this shop
-		// Get chest
-		// get its inventory
-		// Convert typeIdDamage-String to typeId-int
-		// call inventory.getAmount(typeId);
-		int amount = 0;
-		return this.categoryValue / (amount + 1);
+		String category = getCategory( typeIdDamage );
+		return getCategoryValue( category ) / (getAmountInShop( typeIdDamage ) + 1);
 	}
 
 	private double getBuyingPrice( String typeIdDamage ) {
-		int categoryTax = 0;
-		int amount = 0;
-		return (1 + categoryTax) * (this.categoryValue / amount);
+		String category = getCategory( typeIdDamage );
+		return (1 + getCategoryTax( category )) * (getCategoryValue( category ) / getAmountInShop( typeIdDamage ));
 	}
 
-	private int getAmountInShopOf( String typeIdDamage ) {
+	private String getCategory( String typeIdDamage ) {
+		return "default";
+	}
+
+	private int getAmountInShop( String typeIdDamage ) {
 		Integer typeId;
 		if( typeIdDamage.contains( ":" ) ) {
-			// item without damage code price
+			// Price of item without damage code
 			typeId = Integer.parseInt( typeIdDamage.split( ":" )[0] );
 		} else {
 			typeId = Integer.parseInt( typeIdDamage );
@@ -56,5 +54,13 @@ public class PriceListOtherlandShop extends RealPriceList {
 		RealChest chest = RealChest.create( this.plugin.getServer().getWorld( this.shop.world ), this.shop.posX, this.shop.posY, this.shop.posZ );
 		RealInventory inv = RealInventory.create( chest );
 		return inv.getAmount( typeId );
+	}
+
+	private int getCategoryValue( String category ) {
+		return this.categoryValue;
+	}
+
+	private double getCategoryTax( String category ) {
+		return 0.0;
 	}
 }

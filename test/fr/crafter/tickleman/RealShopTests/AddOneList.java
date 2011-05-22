@@ -9,8 +9,8 @@ import fr.crafter.tickleman.RealShop.pricelookup.RealPriceLookupChain;
 
 public class AddOneList extends RealPriceList {
 	@Override
-	public RealPrice getPrice( String typeIdDamage ) {
-		return new RealPrice( 3.0, 4.5 );
+	public RealPrice getPrice( String typeIdDamage, int amount ) {
+		return new RealPrice( 3.0 * amount, 4.5 * amount );
 	}
 
 	public static RealPriceList createInstance( RealShopPlugin plugin, RealShop shop, String playerName, RealPriceLookupChain lookupChain ) {

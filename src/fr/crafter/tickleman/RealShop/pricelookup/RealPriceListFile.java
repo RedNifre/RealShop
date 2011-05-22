@@ -105,7 +105,7 @@ public abstract class RealPriceListFile extends RealPriceList {
 				writer.write( "#item:dm;buy;sell;name\n" );
 				for( String typeIdDamage : dataValues.getIds() ) {
 					// TODO: Include lookup from recipe
-					RealPrice price = getPrice( typeIdDamage );
+					RealPrice price = getPrice( typeIdDamage, 1 );
 					if( price != null ) {
 						writer.write(
 							typeIdDamage + ";"

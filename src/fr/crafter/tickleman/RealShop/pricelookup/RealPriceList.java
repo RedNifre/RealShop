@@ -37,7 +37,7 @@ public abstract class RealPriceList {
 	 * @param typeIdDamage
 	 * @return 
 	 */
-	public abstract RealPrice getPrice( String typeIdDamage );
+	public abstract RealPrice getPrice( String typeIdDamage, int amount );
 
 	/**
 	 * Factory method that creates an instance of the price list.

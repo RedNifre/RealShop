@@ -12,12 +12,15 @@ public class RealPriceListShopFile extends RealPriceListFile {
 	}
 
 	public static RealPriceListShopFile createInstance( RealShopPlugin plugin, RealShop shop, String playerName, RealPriceLookupChain lookupChain ) {
+		if( shop == null ) {
+			return null;
+		}
 		String shopId = shop.world + ";" + shop.posX + ";" + shop.posY + ";" + shop.posZ;
 		return new RealPriceListShopFile( plugin, shopId + ".prices" );
 	}
 
 	@Override
-	public RealPrice getPrice( String typeIdDamage ) {
+	public RealPrice getPrice( String typeIdDamage, int amount ) {
 		RealPrice price = this.prices.get( typeIdDamage );
 		if( (price == null) && typeIdDamage.contains( ":" ) ) {
 			// item without damage code price
