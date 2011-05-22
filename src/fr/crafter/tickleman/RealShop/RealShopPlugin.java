@@ -27,6 +27,8 @@ import fr.crafter.tickleman.RealPlugin.RealPlugin;
 import fr.crafter.tickleman.RealPlugin.RealTime;
 import fr.crafter.tickleman.RealPlugin.RealTools;
 import fr.crafter.tickleman.RealPlugin.RealTranslationFile;
+import fr.crafter.tickleman.RealShop.pricelookup.PriceListOtherlandShop;
+import fr.crafter.tickleman.RealShop.pricelookup.RealPriceLookupChain;
 
 //################################################################################## RealShopPlugin
 public class RealShopPlugin extends RealPlugin
@@ -62,6 +64,9 @@ public class RealShopPlugin extends RealPlugin
 	/** Market prices file (market.txt) : global market price for each item */
 	public RealPricesFile marketFile;
 
+	/** Used lookup chain for prices */
+	private RealPriceLookupChain priceLookupChain;
+	
 	/** Player events Listener */
 	private final RealShopPlayerListener playerListener = new RealShopPlayerListener(this);
 
@@ -942,6 +947,8 @@ public class RealShopPlugin extends RealPlugin
 		// read market file
 		marketFile = new RealPricesFile(this, "market");
 		marketFile.load();
+		// Prepare price lookup chain
+		this.priceLookupChain = new RealPriceLookupChain( PriceListOtherlandShop.class );
 		// read shops file
 		shopsFile = new RealShopsFile(this);
 		shopsFile.load();
