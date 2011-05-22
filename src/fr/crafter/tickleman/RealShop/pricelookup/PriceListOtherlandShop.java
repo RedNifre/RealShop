@@ -25,17 +25,42 @@ public class PriceListOtherlandShop extends RealPriceList {
 
 	@Override
 	public RealPrice getPrice( String typeIdDamage, int amount ) {
-		return new RealPrice( getBuyingPrice( typeIdDamage ), getSellingPrice( typeIdDamage ) );
+		return new RealPrice( getBuyingPrice( typeIdDamage, amount ), getSellingPrice( typeIdDamage, amount ) );
 	}
 
-	private double getSellingPrice( String typeIdDamage ) {
+	private double getSellingPrice( String typeIdDamage, int amount ) {
 		String category = getCategory( typeIdDamage );
-		return getCategoryValue( category ) / (getAmountInShop( typeIdDamage ) + 1);
+		double catValue = getCategoryValue( category );
+		int startAmountInShop = getAmountInShop( typeIdDamage );
+		double price = 0;
+		for( int amountInShop = startAmountInShop; amountInShop > startAmountInShop - amount; amountInShop-- ) {
+			price += sellingFormula( catValue, amountInShop );
+		}
+		return price;
+//		return sellingFormula( catValue, startAmountInShop );
+//		return getCategoryValue( category ) / (getAmountInShop( typeIdDamage ) + 1);
 	}
 
-	private double getBuyingPrice( String typeIdDamage ) {
+	private double sellingFormula( double categoryValue, int amountInShop ) {
+		return categoryValue / (amountInShop + 1);
+	}
+
+	private double getBuyingPrice( String typeIdDamage, int amount ) {
 		String category = getCategory( typeIdDamage );
-		return (1 + getCategoryTax( category )) * (getCategoryValue( category ) / getAmountInShop( typeIdDamage ));
+		double tax = getCategoryTax( category );
+		double catValue = getCategoryValue( category );
+		int startAmountInShop = getAmountInShop( typeIdDamage );
+		double price = 0;
+		for( int amountInShop = startAmountInShop; amountInShop < startAmountInShop + amount; amountInShop++ ) {
+			price += buyingFormula( tax, catValue, amountInShop );
+		}
+		return price;
+//		return (1 + getCategoryTax( category )) * (getCategoryValue( category ) / getAmountInShop( typeIdDamage ));
+	}
+
+	private double buyingFormula( double categoryTax, double categoryValue, int amountInShop ) {
+		return (1 + categoryTax) * (categoryValue / amountInShop);
+
 	}
 
 	private String getCategory( String typeIdDamage ) {
