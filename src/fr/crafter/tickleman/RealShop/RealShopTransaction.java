@@ -5,6 +5,7 @@ import java.util.Iterator;
 
 import fr.crafter.tickleman.RealPlugin.RealItemStack;
 import fr.crafter.tickleman.RealPlugin.RealItemStackHashMap;
+import fr.crafter.tickleman.RealShop.pricelookup.RealPriceLookupChain;
 
 //############################################################################# RealShopTransaction
 public class RealShopTransaction
@@ -16,13 +17,11 @@ public class RealShopTransaction
 
 	private RealItemStackHashMap itemStackHashMap;
 
-	private RealPricesFile marketFile;
-
 	private String playerName;
 
 	private RealShopPlugin plugin;
 
-	private RealPricesFile pricesFile;
+	private RealPriceLookupChain priceLookupChain;
 
 	private String shopPlayerName;
 
@@ -36,15 +35,13 @@ public class RealShopTransaction
 		String playerName,
 		String shopPlayerName,
 		RealItemStackHashMap itemStackHashMap,
-		RealPricesFile pricesFile,
-		RealPricesFile marketFile
+		RealPriceLookupChain priceLookupChain
 	) {
 		this.plugin = plugin;
 		this.playerName = playerName;
 		this.shopPlayerName = shopPlayerName;
 		this.itemStackHashMap = itemStackHashMap;
-		this.pricesFile = pricesFile;
-		this.marketFile = marketFile;
+		this.priceLookupChain = priceLookupChain;
 	}
 
 	//---------------------------------------------------------------------------------------- create
@@ -53,11 +50,10 @@ public class RealShopTransaction
 		String playerName,
 		String shopPlayerName,
 		RealItemStackHashMap itemStackHashMap,
-		RealPricesFile pricesFile,
-		RealPricesFile marketFile
+		RealPriceLookupChain priceLookupChain
 	) {
 		return new RealShopTransaction(
-			plugin, playerName, shopPlayerName, itemStackHashMap, pricesFile, marketFile
+			plugin, playerName, shopPlayerName, itemStackHashMap, priceLookupChain
 		);
 	}
 
@@ -87,10 +83,7 @@ public class RealShopTransaction
 			RealItemStack itemStack = iterator.next();
 			int amount = itemStack.getAmount();
 			String typeIdDurability = itemStack.getTypeIdDurability();
-			RealPrice price = pricesFile.getPrice(typeIdDurability, marketFile);
-			if (price == null) {
-				price = marketFile.getPrice(typeIdDurability, null);
-			}
+			RealPrice price = this.priceLookupChain.getPrice( typeIdDurability, amount, this.plugin, shop, this.shopPlayerName);
 			RealShopTransactionLine transactionLine = new RealShopTransactionLine(itemStack, price);
 			if (
 				(price == null)

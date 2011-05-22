@@ -182,7 +182,7 @@ public class RealShopPlugin extends RealPlugin
 					);
 					// prepare bill
 					RealShopTransaction transaction = RealShopTransaction.create(
-						this, playerName, shopPlayerName, inChestState.itemStackHashMap, pricesFile, marketFile
+						this, playerName, shopPlayerName, inChestState.itemStackHashMap, this.priceLookupChain
 					).prepareBill(shopsFile.shopAt(inChestState.block));
 					if (transaction.isCancelled()) {
 						// transaction is fully cancelled : items go back in their original inventories
