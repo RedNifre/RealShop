@@ -29,6 +29,10 @@ import fr.crafter.tickleman.RealPlugin.RealTools;
 import fr.crafter.tickleman.RealPlugin.RealTranslationFile;
 import fr.crafter.tickleman.RealShop.pricelookup.PriceListOtherlandShop;
 import fr.crafter.tickleman.RealShop.pricelookup.RealPriceLookupChain;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import org.bukkit.inventory.ItemStack;
 
 //################################################################################## RealShopPlugin
 public class RealShopPlugin extends RealPlugin
@@ -172,9 +176,6 @@ public class RealShopPlugin extends RealPlugin
 				Player shopPlayer = getServer().getPlayer(shopPlayerName);
 				boolean had_message = false;
 				if (!shop.player.equals(player.getName())) {
-					RealPricesFile pricesFile = RealPricesFile.playerPricesFile(
-						this, shopPlayerName, marketFile
-					);
 					// remove new chest's inventory items from old chest's inventory
 					// in order to know how many of each has been buy (positive) / sold (negative)
 					inChestState.itemStackHashMap.storeInventory(
@@ -1273,25 +1274,24 @@ public class RealShopPlugin extends RealPlugin
 	{
 		RealShop shop = shopsFile.shopAt(block);
 
-		/* Get prices list for this shop (which may be specific or global) and
-		 * (an iterator over the IDs (which are strings) of) which objects may be sold here. */
-		RealPricesFile pricesFile = RealPricesFile.playerPricesFile(this, shop.player, marketFile);
 		// sell (may be a very long list)
 		String list = "";
 		Iterator<String> sellIterator = shop.sellOnly.keySet().iterator();
 		if (!sellIterator.hasNext()) {
-			sellIterator = dataValuesFile.getIdsIterator();
+//			sellIterator = dataValuesFile.getIdsIterator();
+			ItemStack[] stacks = player.getInventory().getContents();
+			List<String> stackIds = new LinkedList<String>();
+			for(ItemStack stack : stacks) {
+				stackIds.add( String.valueOf(stack.getTypeId()) );
+			}
+			sellIterator = stackIds.iterator();
 		}
 
 		/* Only show the first 20 objects to sell here */
 		int count = 20;
 		while (sellIterator.hasNext()) {
 			String typeIdDamage = sellIterator.next();
-			RealPrice price = pricesFile.getPrice(typeIdDamage, marketFile);
-			// FIXME: This is redundantly done in pricesFile.getPrice(...), and IMO fallback handling doesn't belong into that method.
-			if (price == null) {
-				price = marketFile.getPrice(typeIdDamage, null);
-			}
+			RealPrice price = this.priceLookupChain.getPrice(typeIdDamage, 1, this, shop, player.getName());
 			if ((price != null) && shop.isItemSellAllowed(typeIdDamage)) {
 				if (!list.equals("")) {
 					list += RealColor.message + ", ";
@@ -1326,10 +1326,7 @@ public class RealShopPlugin extends RealPlugin
 		while (buyIterator.hasNext()) {
 			RealItemStack item = buyIterator.next();
 			String typeIdDamage = item.getTypeIdDurability();
-			RealPrice price = pricesFile.getPrice(typeIdDamage, marketFile);
-			if (price == null) {
-				price = marketFile.getPrice(typeIdDamage, null);
-			}
+			RealPrice price = this.priceLookupChain.getPrice(typeIdDamage, 1, this, shop, player.getName());
 			if ((price != null) && shop.isItemBuyAllowed(typeIdDamage)) {
 				if (!list.equals("")) {
 					list += RealColor.message + ", ";

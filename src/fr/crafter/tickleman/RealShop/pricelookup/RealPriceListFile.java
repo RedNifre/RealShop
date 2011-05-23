@@ -2,6 +2,7 @@
 package fr.crafter.tickleman.RealShop.pricelookup;
 
 import fr.crafter.tickleman.RealPlugin.RealDataValuesFile;
+import fr.crafter.tickleman.RealPlugin.RealItemStack;
 import fr.crafter.tickleman.RealPlugin.RealTools;
 import fr.crafter.tickleman.RealShop.RealPrice;
 import fr.crafter.tickleman.RealShop.RealShopPlugin;
@@ -29,6 +30,9 @@ public abstract class RealPriceListFile extends RealPriceList {
 	}
 
 	public static boolean pricesFileExists( RealShopPlugin plugin, String shopId ) {
+		if( shopId.equals( "market" ) ) {
+			return RealTools.fileExists( "plugins/" + plugin.name + "/" + shopId + ".txt" );
+		}
 		return RealTools.fileExists( "plugins/" + plugin.name + "/" + shopId + ".prices.txt" );
 	}
 
@@ -129,5 +133,35 @@ public abstract class RealPriceListFile extends RealPriceList {
 				plugin.log.error( e.getStackTrace().toString() );
 			}
 		}
+	}
+
+	@Override
+	public RealPrice getPrice( String typeIdDamage, int amount ) {
+		RealPrice price = this.prices.get( typeIdDamage );
+		if( (price == null) && typeIdDamage.contains( ":" ) ) {
+			// item without damage code price
+			Integer typeId = Integer.parseInt( typeIdDamage.split( ":" )[0] );
+			Short damage = Short.parseShort( typeIdDamage.split( ":" )[1] );
+			// TODO: Might also ask the chain again, see original code
+			price = this.prices.get( typeId.toString() );
+			if( price != null ) {
+				// apply a ratio from the damage amount
+				try {
+					price.damagedBuy = Math.max(
+						0, price.buy - (price.buy * damage / RealItemStack.typeIdMaxDamage( typeId )) );
+				} catch( Exception e ) {
+				}
+				try {
+					price.damagedSell = Math.max(
+						0, price.sell - (price.sell * damage / RealItemStack.typeIdMaxDamage( typeId )) );
+				} catch( Exception e ) {
+				}
+			}
+		}
+		if( price != null ) {
+			price.buy *= amount;
+			price.sell *= amount;
+		}
+		return price;
 	}
 }
