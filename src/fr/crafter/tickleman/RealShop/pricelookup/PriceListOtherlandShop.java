@@ -1,11 +1,18 @@
 
 package fr.crafter.tickleman.RealShop.pricelookup;
 
-import fr.crafter.tickleman.RealPlugin.RealChest;
-import fr.crafter.tickleman.RealPlugin.RealInventory;
 import fr.crafter.tickleman.RealShop.RealPrice;
 import fr.crafter.tickleman.RealShop.RealShop;
 import fr.crafter.tickleman.RealShop.RealShopPlugin;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class PriceListOtherlandShop extends RealPriceList {
 	/* Constants for price calculation */
@@ -13,10 +20,13 @@ public class PriceListOtherlandShop extends RealPriceList {
 	/* Other variables */
 	private RealShopPlugin plugin;
 	private RealShop shop;
+	private Map<String, String> itemCategories = new HashMap<String, String>();
+	private Map<String, Double> categoryTaxes = new HashMap<String, Double>();
 
 	private PriceListOtherlandShop( RealShopPlugin plugin, RealShop shop ) {
 		this.plugin = plugin;
 		this.shop = shop;
+		load();
 	}
 
 	public static PriceListOtherlandShop createInstance( RealShopPlugin plugin, RealShop shop, String playerName, RealPriceLookupChain lookupChain ) {
@@ -64,21 +74,30 @@ public class PriceListOtherlandShop extends RealPriceList {
 	}
 
 	private String getCategory( String typeIdDamage ) {
-		return "default";
+		String typeName = this.plugin.dataValuesFile.getName( typeIdDamage ).toLowerCase();
+		String category = this.itemCategories.get( typeName );
+		// Not found: Try again without damage value
+//		if(category == null)
+//			category = this.itemCategories.get( typeIdDamage );
+		if( category == null ) {
+			category = "default";
+		}
+		return category;
 	}
 
 	private int getAmountInShop( String typeIdDamage ) {
-		Integer typeId;
-		if( typeIdDamage.contains( ":" ) ) {
-			// Price of item without damage code
-			typeId = Integer.parseInt( typeIdDamage.split( ":" )[0] );
-		} else {
-			typeId = Integer.parseInt( typeIdDamage );
-		}
-
-		RealChest chest = RealChest.create( this.plugin.getServer().getWorld( this.shop.world ), this.shop.posX, this.shop.posY, this.shop.posZ );
-		RealInventory inv = RealInventory.create( chest );
-		return inv.getAmount( typeId );
+		return 2;
+//		Integer typeId;
+//		if( typeIdDamage.contains( ":" ) ) {
+//			// Price of item without damage code
+//			typeId = Integer.parseInt( typeIdDamage.split( ":" )[0] );
+//		} else {
+//			typeId = Integer.parseInt( typeIdDamage );
+//		}
+//
+//		RealChest chest = RealChest.create( this.plugin.getServer().getWorld( this.shop.world ), this.shop.posX, this.shop.posY, this.shop.posZ );
+//		RealInventory inv = RealInventory.create( chest );
+//		return inv.getAmount( typeId );
 	}
 
 	private int getCategoryValue( String category ) {
@@ -86,6 +105,48 @@ public class PriceListOtherlandShop extends RealPriceList {
 	}
 
 	private double getCategoryTax( String category ) {
-		return 0.0;
+		Double tax = this.categoryTaxes.get( category );
+		if( tax == null ) {
+			tax = 0d;
+		}
+		return tax;
+	}
+
+	/* Specification files */
+	private void load() {
+		Scanner fileScanner;
+		/* Parse associations item -> category */
+		try {
+			fileScanner = new Scanner( new File( "plugins/" + plugin.name + "/" + "ItemCategoryDefinitions.txt" ) );
+			this.itemCategories.clear();
+			while( fileScanner.hasNextLine() ) {
+				String line = fileScanner.nextLine();
+				String[] values = line.split( ":" );
+				if( values.length != 2 ) {
+					this.plugin.log.warning( "Item category definitions file has invalid format!" );
+				} else {
+					this.itemCategories.put( values[0].toLowerCase(), values[1].toLowerCase() );
+				}
+			}
+		} catch( FileNotFoundException ex ) {
+			Logger.getLogger( PriceListOtherlandShop.class.getName() ).log( Level.SEVERE, null, ex );
+		}
+
+		/* Parse associations category -> tax */
+		try {
+			fileScanner = new Scanner( new File( "plugins/" + plugin.name + "/" + "CategoryTaxDefinitions.txt" ) );
+			this.categoryTaxes.clear();
+			while( fileScanner.hasNextLine() ) {
+				String line = fileScanner.nextLine();
+				String[] values = line.split( ":" );
+				if( values.length != 2 ) {
+					this.plugin.log.warning( "Category taxes definitions file has invalid format!" );
+				} else {
+					this.categoryTaxes.put( values[0].toLowerCase(), Double.valueOf( values[1] ) );
+				}
+			}
+		} catch( FileNotFoundException ex ) {
+			Logger.getLogger( PriceListOtherlandShop.class.getName() ).log( Level.SEVERE, null, ex );
+		}
 	}
 }

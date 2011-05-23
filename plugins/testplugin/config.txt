@@ -1,0 +1,15 @@
+language=en
+dailyPricesCalculation=false
+economyPlugin=RealEconomy
+shopDamagedItems=true
+shopInfiniteBuy=false
+shopInfiniteSell=false
+shopMarketItemsOnly=false
+shopOpOnly=false
+workForceRatio=1.1
+buySellRatio=0.95
+minDailyRatio=0.05
+maxDailyRatio=1.95
+amountRatio=5000.0
+minItemPrice=0.1
+maxItemPrice=99999.0

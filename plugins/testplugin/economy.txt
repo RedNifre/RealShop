@@ -1,0 +1,3 @@
+language=en
+currency=Coin
+initialBalance=100.0

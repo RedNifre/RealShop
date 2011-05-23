@@ -1,0 +1,4 @@
+Cobblestone:material
+Stone:material
+Bucket:taxfree
+Gold Helmet:luxury
