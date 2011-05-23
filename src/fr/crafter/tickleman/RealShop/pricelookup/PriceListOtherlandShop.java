@@ -1,6 +1,8 @@
 
 package fr.crafter.tickleman.RealShop.pricelookup;
 
+import fr.crafter.tickleman.RealPlugin.RealChest;
+import fr.crafter.tickleman.RealPlugin.RealInventory;
 import fr.crafter.tickleman.RealShop.RealPrice;
 import fr.crafter.tickleman.RealShop.RealShop;
 import fr.crafter.tickleman.RealShop.RealShopPlugin;
@@ -86,18 +88,17 @@ public class PriceListOtherlandShop extends RealPriceList {
 	}
 
 	private int getAmountInShop( String typeIdDamage ) {
-		return 2;
-//		Integer typeId;
-//		if( typeIdDamage.contains( ":" ) ) {
-//			// Price of item without damage code
-//			typeId = Integer.parseInt( typeIdDamage.split( ":" )[0] );
-//		} else {
-//			typeId = Integer.parseInt( typeIdDamage );
-//		}
-//
-//		RealChest chest = RealChest.create( this.plugin.getServer().getWorld( this.shop.world ), this.shop.posX, this.shop.posY, this.shop.posZ );
-//		RealInventory inv = RealInventory.create( chest );
-//		return inv.getAmount( typeId );
+		Integer typeId;
+		if( typeIdDamage.contains( ":" ) ) {
+			// Price of item without damage code
+			typeId = Integer.parseInt( typeIdDamage.split( ":" )[0] );
+		} else {
+			typeId = Integer.parseInt( typeIdDamage );
+		}
+
+		RealChest chest = RealChest.create( this.plugin.getServer().getWorld( this.shop.world ), this.shop.posX, this.shop.posY, this.shop.posZ );
+		RealInventory inv = RealInventory.create( chest );
+		return inv.getAmount( typeId );
 	}
 
 	private int getCategoryValue( String category ) {
