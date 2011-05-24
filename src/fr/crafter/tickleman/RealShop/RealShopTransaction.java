@@ -83,7 +83,7 @@ public class RealShopTransaction
 			RealItemStack itemStack = iterator.next();
 			int amount = itemStack.getAmount();
 			String typeIdDurability = itemStack.getTypeIdDurability();
-			RealPrice price = this.priceLookupChain.getPrice( typeIdDurability, amount, this.plugin, shop, this.shopPlayerName);
+			RealPrice price = this.priceLookupChain.getPrice( typeIdDurability, Math.abs( amount ), this.plugin, shop, this.shopPlayerName);
 			RealShopTransactionLine transactionLine = new RealShopTransactionLine(itemStack, price);
 			if (
 				(price == null)
