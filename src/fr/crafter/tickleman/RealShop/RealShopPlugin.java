@@ -32,6 +32,8 @@ import fr.crafter.tickleman.RealShop.pricelookup.RealPriceLookupChain;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.bukkit.inventory.ItemStack;
 
 //################################################################################## RealShopPlugin
@@ -1091,7 +1093,7 @@ public class RealShopPlugin extends RealPlugin
 				playerName
 			);
 			shop.name = shopName;
-			shop.sellOnly.put("0", true);
+//			shop.sellOnly.put("0", true);
 			shopsFile.shops.put(key, shop);
 			if (neighborBlock != null) {
 				registerBlockAsShop(player, neighborBlock, shopName, 1);
@@ -1281,8 +1283,10 @@ public class RealShopPlugin extends RealPlugin
 //			sellIterator = dataValuesFile.getIdsIterator();
 			ItemStack[] stacks = player.getInventory().getContents();
 			List<String> stackIds = new LinkedList<String>();
-			for(ItemStack stack : stacks) {
-				stackIds.add( String.valueOf(stack.getTypeId()) );
+			for( ItemStack stack : stacks ) {
+				if( stack != null ) {
+					stackIds.add( String.valueOf(stack.getTypeId()) );
+				}
 			}
 			sellIterator = stackIds.iterator();
 		}
