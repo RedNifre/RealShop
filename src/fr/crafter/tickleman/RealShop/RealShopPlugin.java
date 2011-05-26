@@ -29,11 +29,8 @@ import fr.crafter.tickleman.RealPlugin.RealTools;
 import fr.crafter.tickleman.RealPlugin.RealTranslationFile;
 import fr.crafter.tickleman.RealShop.pricelookup.PriceListOtherlandShop;
 import fr.crafter.tickleman.RealShop.pricelookup.RealPriceLookupChain;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.bukkit.inventory.ItemStack;
 
 //################################################################################## RealShopPlugin
@@ -1353,5 +1350,4 @@ public class RealShopPlugin extends RealPlugin
 			);
 		}
 	}
-
 }

@@ -149,4 +149,12 @@ public class RealChest
 		return scanForNeighborChest(block.getWorld(), block.getX(), block.getY(), block.getZ());
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof RealChest) {
+			if(((RealChest)obj).mainChestId.equals( this.mainChestId) )
+				return true;
+		}
+		return false;
+	}
 }

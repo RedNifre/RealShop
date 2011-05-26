@@ -3,6 +3,9 @@ package fr.crafter.tickleman.RealShop.pricelookup;
 
 import fr.crafter.tickleman.RealPlugin.RealChest;
 import fr.crafter.tickleman.RealPlugin.RealInventory;
+import fr.crafter.tickleman.RealPlugin.RealItemStack;
+import fr.crafter.tickleman.RealPlugin.RealItemStackHashMap;
+import fr.crafter.tickleman.RealShop.RealInChestState;
 import fr.crafter.tickleman.RealShop.RealPrice;
 import fr.crafter.tickleman.RealShop.RealShop;
 import fr.crafter.tickleman.RealShop.RealShopPlugin;
@@ -10,9 +13,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -97,8 +103,41 @@ public class PriceListOtherlandShop extends RealPriceList {
 		}
 
 		RealChest chest = RealChest.create( this.plugin.getServer().getWorld( this.shop.world ), this.shop.posX, this.shop.posY, this.shop.posZ );
-		RealInventory inv = RealInventory.create( chest );
-		return inv.getAmount( typeId );
+
+		/* Find, if available, the user that has opened this shop. */
+		String shopUser = null;
+		RealInChestState playerState = null;
+		Set<String> userSet = this.plugin.inChestStates.keySet();
+		Iterator<String> userIterator = userSet.iterator();
+
+		while( userIterator.hasNext() ) {
+			String currentUser = userIterator.next();
+			RealInChestState currentState = this.plugin.inChestStates.get( currentUser );
+			if( currentState != null ) {
+				if( chest.equals( currentState.chest ) ) {
+					shopUser = currentUser;
+					playerState = currentState;
+					break;
+				}
+			}
+		}
+
+		if( playerState != null ) {
+			RealItemStackHashMap chestInventoryBackup = playerState.itemStackHashMap;
+			Iterator<RealItemStack> itemStackIterator = chestInventoryBackup.getContents().iterator();
+			int amount = 0;
+			while( itemStackIterator.hasNext() ) {
+				RealItemStack itemStack = itemStackIterator.next();
+				String typeIdDurability = itemStack.getTypeIdDurability();
+				if( typeIdDamage.equals( typeIdDurability ) ) {
+					amount += Math.abs( itemStack.getAmount() );
+				}
+			}
+			return amount;
+		} else {
+			RealInventory inv = RealInventory.create( chest );
+			return inv.getAmount( typeId );
+		}
 	}
 
 	private int getCategoryValue( String category ) {
